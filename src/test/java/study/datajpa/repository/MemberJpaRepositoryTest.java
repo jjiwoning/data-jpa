@@ -61,4 +61,9 @@ class MemberJpaRepositoryTest {
         assertThat(deletedCount).isEqualTo(0);
     }
 
+    @Test
+    void findByUsernameAndAgeGreaterThen(){
+
+    }
+
 }
