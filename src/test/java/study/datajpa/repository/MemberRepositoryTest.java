@@ -1,12 +1,14 @@
 package study.datajpa.repository;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.dto.MemberDto;
 import study.datajpa.entity.Member;
@@ -23,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
+@Rollback(value = false)
 class MemberRepositoryTest {
 
     @Autowired
@@ -33,7 +36,7 @@ class MemberRepositoryTest {
     EntityManager em;
 
     @Test
-    void testMember(){
+    void testMember() {
         Member member = new Member("memberA");
         Member savedMember = memberRepository.save(member);
 
@@ -45,7 +48,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void basicCRUD(){
+    void basicCRUD() {
         Member member1 = new Member("member1");
         Member member2 = new Member("member2");
 
@@ -75,7 +78,19 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findByUsernameAndAgeGreaterThen(){
+    @DisplayName("변경 감지 테스트")
+    void update() {
+        Member member = new Member("memberA");
+        memberRepository.save(member);
+        em.flush();
+        em.clear();
+
+        Member findMember = memberRepository.findById(member.getId()).get();
+        findMember.setUsername("memberABC");
+    }
+
+    @Test
+    void findByUsernameAndAgeGreaterThen() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("AAA", 20);
         memberRepository.save(member1);
@@ -89,7 +104,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findAll(){
+    void findAll() {
         Member member1 = new Member("AAA", 10);
         memberRepository.save(member1);
 
@@ -99,7 +114,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void namedQuery(){
+    void namedQuery() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("BBB", 20);
         memberRepository.save(member1);
@@ -113,7 +128,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void testQuery(){
+    void testQuery() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("BBB", 20);
         memberRepository.save(member1);
@@ -127,7 +142,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findUsernameList(){
+    void findUsernameList() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("BBB", 20);
         memberRepository.save(member1);
@@ -141,7 +156,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findMemberDto(){
+    void findMemberDto() {
         Team team = new Team("teamA");
         teamRepository.save(team);
 
@@ -156,7 +171,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findByNames(){
+    void findByNames() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("BBB", 20);
         memberRepository.save(member1);
@@ -170,7 +185,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void returnType(){
+    void returnType() {
         Member member1 = new Member("AAA", 10);
         Member member2 = new Member("BBB", 20);
         memberRepository.save(member1);
@@ -182,7 +197,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void paging(){
+    void paging() {
         //given
         memberRepository.save(new Member("member1", 10));
         memberRepository.save(new Member("member2", 10));
@@ -212,7 +227,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void bulkUpdate(){
+    public void bulkUpdate() {
         //given
         memberRepository.save(new Member("member1", 10));
         memberRepository.save(new Member("member2", 19));
@@ -234,7 +249,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void findMemberLazy(){
+    void findMemberLazy() {
         //given
         //member1 -> teamA
         //member2 -> teamB
@@ -266,7 +281,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void queryHint(){
+    public void queryHint() {
         //given
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -279,7 +294,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    public void lock(){
+    public void lock() {
         //given
         Member member = new Member("member1", 10);
         memberRepository.save(member);
@@ -292,7 +307,7 @@ class MemberRepositoryTest {
     }
 
     @Test
-    void callCustom(){
+    void callCustom() {
         List<Member> result = memberRepository.findMemberCustom();
     }
 }
